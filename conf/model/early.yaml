@@ -1,0 +1,33 @@
+# Early fusion base: per-day FinBERT + iTransformer.
+_target_: stock_forecaster.models.early_fusion_model.EarlyFusionStockModel
+classifier_input_dim: 256
+num_classes: 1
+n_price_features: ${data.n_features}
+text_feat_dim: 32
+
+ts_encoder:
+  _target_: stock_forecaster.models.ts_encoder.TSLibITransformerEncoder
+  seq_len: ${data.seq_len}
+  n_features: ${data.n_features}
+  n_price_features: ${model.n_price_features}
+  text_feat_dim: ${model.text_feat_dim}
+  multimodal_mode: flatten
+  text_m_dim: 1
+  d_model: 128
+  n_heads: 4
+  e_layers: 2
+  d_ff: 512
+  dropout: 0.1
+  factor: 1
+  embed: fixed
+  freq: h
+  activation: gelu
+  use_revin: true
+  latent_dim: ${model.classifier_input_dim}
+
+nlp_encoder:
+  _target_: stock_forecaster.models.nlp_encoder.FinBertEncoder
+  model_name: ProsusAI/finbert
+  embed_dim: ${model.text_feat_dim}
+  max_length: 128
+  freeze_backbone: true

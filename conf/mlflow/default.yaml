@@ -1,0 +1,4 @@
+tracking_uri: http://127.0.0.1:8080
+experiment_name: ${experiment_name}
+log_model: true
+log_plots: true

@@ -1,0 +1,17 @@
+# @package _global_
+# Dense eval: every 2023 trading day, inference-style dynamic windows.
+defaults:
+  - /config
+  - _self_
+
+checkpoint_path: checkpoints/hybrid/best-epoch=02-val_loss=0.8134.ckpt
+eval_label: hybrid_dense_test2023
+eval_output: artifacts/metrics_dense_test2023.json
+batch_size: 32
+include_stride_reference: true
+
+data:
+  train_year_min: 2018
+  train_year_max: 2021
+  val_years: [2022]
+  test_years: [2023]

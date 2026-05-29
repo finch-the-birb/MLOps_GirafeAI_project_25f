@@ -1,0 +1,65 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+.env
+.env.*
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Data & artifacts (DVC-tracked)
+data/raw/
+data/processed/
+data/interim/
+*.csv
+*.parquet
+*.json
+*.h5
+*.hdf5
+
+# Models
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.engine
+*.plan
+mlruns/
+mlartifacts/
+mlflow.db
+*.db
+lightning_logs/
+checkpoints/
+plots/
+outputs/
+multirun/
+
+# DVC
+.dvc/cache/
+.dvc/tmp/
+dvc-storage/
+
+# Hydra
+.hydra/
+
+# Local run outputs
+.run/
+models/
+artifacts/
+site/
+project_notes/
+*.log
+.pytest_cache/
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,22 @@
+defaults:
+  - data: thr03
+  - model: hybrid
+  - trainer: default
+  - mlflow: default
+  - inference: default
+  - _self_
+
+seed: 42
+experiment_name: stock_forecaster
+run_name: null
+
+checkpoint_path: null
+eval_label: null
+eval_output: null
+
+paths:
+  data_dir: ${data.data_dir}
+  processed_file: ${data.processed_file}
+  checkpoint_dir: checkpoints/hybrid
+  plots_dir: plots/hybrid
+  onnx_output: artifacts/hybrid.onnx

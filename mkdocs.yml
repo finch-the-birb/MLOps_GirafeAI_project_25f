@@ -1,0 +1,63 @@
+site_name: Stock Forecaster MLOps
+site_description: Мультимодальный прогноз направления акций (FNSPID + iTransformer + FinBERT)
+site_author: Evseev Ivan Alexandrovich
+
+exclude_docs: |
+  assets/screenshots/README.md
+
+theme:
+  name: material
+  language: ru
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Тёмная тема
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Светлая тема
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - content.code.copy
+
+plugins:
+  - search
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Главная: index.md
+  - Быстрый старт: getting-started.md
+  - Архитектура: architecture.md
+  - Данные и DVC: data-and-dvc.md
+  - Обучение: training.md
+  - Оценка: evaluation.md
+  - Инференс: inference.md
+  - Конфигурация: configuration.md
+  - Демо и скриншоты: demo.md
+  - Ссылки: references.md
+
+extra:
+  generator: false

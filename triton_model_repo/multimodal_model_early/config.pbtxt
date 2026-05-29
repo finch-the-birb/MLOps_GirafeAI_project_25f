@@ -1,0 +1,36 @@
+name: "multimodal_model_early"
+platform: "onnxruntime_onnx"
+max_batch_size: 32
+
+input [
+  {
+    name: "time_series"
+    data_type: TYPE_FP32
+    dims: [ 30, 6 ]
+  },
+  {
+    name: "text_per_step"
+    data_type: TYPE_FP32
+    dims: [ 30, 32 ]
+  }
+]
+
+output [
+  {
+    name: "probability"
+    data_type: TYPE_FP32
+    dims: [ 1 ]
+  }
+]
+
+dynamic_batching {
+  preferred_batch_size: [ 4, 8, 16 ]
+  max_queue_delay_microseconds: 100
+}
+
+instance_group [
+  {
+    count: 1
+    kind: KIND_CPU
+  }
+]

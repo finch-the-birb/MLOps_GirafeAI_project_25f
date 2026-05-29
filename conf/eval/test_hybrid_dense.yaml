@@ -1,0 +1,10 @@
+# @package _global_
+# Test eval for hybrid_dense checkpoint (stride=1 test loader, same as train_dense).
+defaults:
+  - /config
+  - override /data: thr03_dense
+  - _self_
+
+checkpoint_path: checkpoints/hybrid_dense/best.ckpt
+eval_label: hybrid_dense_stride1_test2023
+eval_output: artifacts/metrics_hybrid_dense_stride1_test2023.json

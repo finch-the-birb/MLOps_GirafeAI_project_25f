@@ -1,0 +1,9 @@
+# @package _global_
+# Evaluate best checkpoint on test split (2023, stride=30).
+defaults:
+  - /config
+  - _self_
+
+checkpoint_path: checkpoints/hybrid/best-epoch=02-val_loss=0.8134.ckpt
+eval_label: hybrid_test2023
+eval_output: artifacts/metrics_test2023.json

@@ -1,0 +1,23 @@
+# @package _global_
+# Train hybrid on dense windows (stride=1). Longer run — use before exam / overnight.
+#
+#   make train-dense
+#   # or:
+#   uv run python -m stock_forecaster.train +experiment=train_dense
+
+defaults:
+  - override /data: thr03_dense
+  - override /model: hybrid
+  - override /trainer: default
+  - _self_
+
+run_name: hybrid_dense
+
+paths:
+  checkpoint_dir: checkpoints/hybrid_dense
+  plots_dir: plots/hybrid_dense
+  onnx_output: artifacts/hybrid_dense.onnx
+
+mlflow:
+  log_model: true
+  log_plots: true

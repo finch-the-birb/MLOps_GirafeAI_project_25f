@@ -1,0 +1,5 @@
+# Same thr=0.3% dataset, but overlapping windows (stride=1) — closer to inference/dense eval.
+defaults:
+  - thr03
+
+window_stride: 1

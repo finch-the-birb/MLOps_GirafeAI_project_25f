@@ -1,0 +1,8 @@
+[core]
+    remote = localstorage
+['remote "localstorage"']
+    url = ../dvc-storage
+['remote "s3storage"']
+    url = s3://your-bucket/stock-forecaster/dvc
+    # region = us-east-1
+    # credential modifications can be made in .dvc/config.local

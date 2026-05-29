@@ -1,0 +1,13 @@
+model_type: random_forest # random_forest | hist_gradient_boosting | xgboost
+
+params:
+  n_estimators: 300
+  max_depth: 12
+  min_samples_leaf: 5
+  class_weight: balanced
+  random_state: ${seed}
+  n_jobs: -1
+
+run_name: rf_baseline
+output_dir: models/baseline
+metrics_path: artifacts/baseline_rf_metrics.json

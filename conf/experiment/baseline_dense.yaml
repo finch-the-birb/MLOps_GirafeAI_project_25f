@@ -1,0 +1,28 @@
+# @package _global_
+# Tabular baseline on dense windows (stride=1, default: Random Forest).
+#
+#   make baseline-dense
+#   # or:
+#   uv run python -m stock_forecaster.baseline.train +experiment=baseline_dense
+
+defaults:
+  - override /data: thr03_dense
+  - override /mlflow: default
+  - _self_
+
+baseline:
+  model_type: random_forest
+  params:
+    n_estimators: 300
+    max_depth: 12
+    min_samples_leaf: 5
+    class_weight: balanced
+    random_state: ${seed}
+    n_jobs: -1
+  run_name: rf_baseline_dense
+  output_dir: models/baseline
+  metrics_path: artifacts/baseline_rf_dense_metrics.json
+
+mlflow:
+  log_model: true
+  log_plots: false

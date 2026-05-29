@@ -1,0 +1,8 @@
+stages:
+  prepare:
+    cmd: python -m stock_forecaster.data.download_data
+    deps:
+      - src/stock_forecaster/data/download_data.py
+    outs:
+      - data/processed/fnspid_subset_thr03.parquet:
+          persist: true

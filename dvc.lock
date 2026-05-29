@@ -1,0 +1,14 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python -m stock_forecaster.data.download_data
+    deps:
+    - path: src/stock_forecaster/data/download_data.py
+      hash: md5
+      md5: 2e04dc6d9565733f443517e109abc5ad
+      size: 15368
+    outs:
+    - path: data/processed/fnspid_subset_thr03.parquet
+      hash: md5
+      md5: 724611f9d1f2617c47dddc7fe5500e1a
+      size: 33043105

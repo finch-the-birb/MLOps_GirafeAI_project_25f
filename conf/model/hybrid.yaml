@@ -1,0 +1,10 @@
+# Final model: gated_fusion, d_model=96, dropout=0.30 (see docs/architecture.md).
+defaults:
+  - early
+
+ts_encoder:
+  multimodal_mode: gated_fusion
+  d_model: 96
+  n_heads: 2
+  d_ff: 384
+  dropout: 0.30

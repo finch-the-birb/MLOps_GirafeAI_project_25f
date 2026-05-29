@@ -1,0 +1,9 @@
+# Final dataset: label threshold 0.3%, early fusion, non-overlapping windows.
+defaults:
+  - default
+
+processed_file: ${.data_dir}/fnspid_subset_thr03.parquet
+fusion_mode: early
+seq_len: 30
+window_stride: 30
+label_threshold_pct: 0.3

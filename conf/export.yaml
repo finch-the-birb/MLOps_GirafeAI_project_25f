@@ -1,0 +1,11 @@
+defaults:
+  - data: thr03
+  - model: hybrid
+  - trainer: default
+  - _self_
+
+checkpoint_path: checkpoints/hybrid/best-epoch=02-val_loss=0.8134.ckpt
+onnx_output: artifacts/hybrid.onnx
+opset_version: 17
+dynamic_batch: true
+triton_copy: triton_model_repo/multimodal_model_early/1/model.onnx

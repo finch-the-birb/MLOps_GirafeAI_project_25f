@@ -1,0 +1,11 @@
+ticker: AAPL
+fusion_mode: ${data.fusion_mode}
+triton_url: localhost:8000
+triton_model_name: multimodal_model
+triton_model_name_early: multimodal_model_early
+triton_model_version: "1"
+http_timeout_sec: 60.0
+service_host: 0.0.0.0
+service_port: 8001
+seq_len: ${data.seq_len}
+n_features: ${data.n_features}

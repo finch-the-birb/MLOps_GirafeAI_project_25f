@@ -1,0 +1,12 @@
+# @package _global_
+# Dense inference-style eval for hybrid_dense checkpoint (every 2023 trading day).
+defaults:
+  - /config
+  - override /data: thr03_dense
+  - _self_
+
+checkpoint_path: checkpoints/hybrid_dense/best.ckpt
+eval_label: hybrid_dense_inference_test2023
+eval_output: artifacts/metrics_hybrid_dense_inference_test2023.json
+batch_size: 32
+include_stride_reference: true
