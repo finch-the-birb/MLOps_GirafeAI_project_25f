@@ -50,17 +50,25 @@ make eval
 
 ### 06 — Triton READY
 
+Triton на `/v2/health/ready` и `.../models/.../ready` возвращает **HTTP 200 с пустым телом** —
+это нормально. Для скрина используйте команды, которые **печатают видимый вывод**:
+
 ```powershell
-Invoke-RestMethod -Uri "http://127.0.0.1:8000/v2/health/ready"
+# код ответа (ожидается 200)
+(Invoke-WebRequest -Uri "http://127.0.0.1:8000/v2/health/ready" -UseBasicParsing).StatusCode
 
-Invoke-RestMethod -Uri "http://127.0.0.1:8000/v2/models/multimodal_model_early/ready"
+# метаданные модели (JSON — удобно для скрина)
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/v2/models/multimodal_model_early" | ConvertTo-Json -Depth 5
 
-# альтернатива (настоящий curl, не alias):
-curl.exe -s http://127.0.0.1:8000/v2/health/ready
-curl.exe -s http://127.0.0.1:8000/v2/models/multimodal_model_early/ready
+# smoke-test инференса (probability=...)
+make test-triton
+
+# curl: показать код, если тело пустое
+curl.exe -s -w "HTTP %{http_code}`n" http://127.0.0.1:8000/v2/health/ready
+curl.exe -s http://127.0.0.1:8000/v2/models/multimodal_model_early
 ```
 
-Скрин: JSON с `"ready": true` или вывод `make test-triton`.
+Скрин: `HTTP 200`, JSON модели или вывод `make test-triton` (`probability=...`).
 
 ### 07 — FastAPI `/api/v1/predict`
 
@@ -71,36 +79,8 @@ Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8001/api/v1/predict" `
   -ContentType "application/json" `
   -Body '{"ticker":"AAPL","target_date":"2023-06-15"}'
 
-# альтернатива:
-curl.exe -s -X POST "http://127.0.0.1:8001/api/v1/predict" `
-  -H "Content-Type: application/json" `
-  -d "{\"ticker\":\"AAPL\",\"target_date\":\"2023-06-15\"}"
+# curl в PowerShell: нужен --%, иначе JSON «ломается» при передаче в curl.exe
+curl.exe --% -s -X POST http://127.0.0.1:8001/api/v1/predict -H "Content-Type: application/json" -d "{\"ticker\":\"AAPL\",\"target_date\":\"2023-06-15\"}"
 ```
 
 Скрин: JSON-ответ в терминале или Swagger → http://127.0.0.1:8001/docs .
-
-## Скриншоты
-
-Положите PNG в `docs/assets/screenshots/`:
-
-| Файл                          | Содержание            |
-| ----------------------------- | --------------------- |
-| `01_mlflow_experiments.png`   | MLflow: список run'ов |
-| `02_mlflow_run_metrics.png`   | Метрики hybrid run    |
-| `03_mlflow_plots.png`         | Кривые обучения       |
-| `04_eval_test_metrics.png`    | `make eval`           |
-| `05_baseline_vs_hybrid.png`   | RF vs hybrid          |
-| `06_triton_ready.png`         | Triton READY          |
-| `07_fastapi_predict.png`      | `/api/v1/predict`     |
-| `08_streamlit_overview.png`   | UI: тикер + календарь |
-| `09_streamlit_prediction.png` | Прогноз vs факт       |
-| `10_streamlit_chart.png`      | OHLCV chart           |
-| `11_dense_eval.png`           | Dense eval            |
-
-В README можно вставить:
-
-```markdown
-![MLflow](docs/assets/screenshots/01_mlflow_experiments.png)
-```
-
-Опционально: `12_docker_compose.png`, `13_cli_infer.png`.

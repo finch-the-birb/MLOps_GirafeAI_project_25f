@@ -73,7 +73,7 @@ mlflow: $(RUN_DIR) ## Запустить MLflow UI (фон, :8080)
 	fi
 
 mlflow-stop: ## Остановить MLflow
-	@$(MAKE) --no-print-directory _stop-pid NAME=mlflow PORT=$(MLFLOW_PORT)
+	$(call STOP_SERVICE,mlflow,$(MLFLOW_PORT))
 
 train: mlflow ## Обучить hybrid-модель (+experiment=train, stride=30)
 	$(PY) -m stock_forecaster.train +experiment=train
@@ -134,7 +134,7 @@ api: $(RUN_DIR) ## Запустить FastAPI (фон, :8001)
 	fi
 
 api-stop: ## Остановить FastAPI
-	@$(MAKE) --no-print-directory _stop-pid NAME=api PORT=$(API_PORT)
+	$(call STOP_SERVICE,api,$(API_PORT))
 
 ui: install-ui $(RUN_DIR) ## Запустить Streamlit UI (фон, :8501)
 	@if [ -f $(RUN_DIR)/ui.pid ] && kill -0 $$(cat $(RUN_DIR)/ui.pid) 2>/dev/null; then \
@@ -149,7 +149,7 @@ ui: install-ui $(RUN_DIR) ## Запустить Streamlit UI (фон, :8501)
 	fi
 
 ui-stop: ## Остановить Streamlit
-	@$(MAKE) --no-print-directory _stop-pid NAME=ui PORT=$(UI_PORT)
+	$(call STOP_SERVICE,ui,$(UI_PORT))
 
 infer: triton-up ## CLI-инференс (TICKER=AAPL)
 	$(PY) infer.py ticker=$(TICKER)
@@ -176,7 +176,7 @@ docs: install-docs $(RUN_DIR) ## Запустить MkDocs (фон, :8002)
 	fi
 
 docs-stop: ## Остановить MkDocs
-	@$(MAKE) --no-print-directory _stop-pid NAME=docs PORT=$(DOCS_PORT)
+	$(call STOP_SERVICE,docs,$(DOCS_PORT))
 
 docs-serve: install-docs ## MkDocs dev-сервер на переднем плане (:8002)
 	$(UV) mkdocs serve -a 127.0.0.1:$(DOCS_PORT)
@@ -187,17 +187,20 @@ docs-build: install-docs ## Собрать статический сайт в si
 $(RUN_DIR):
 	@powershell.exe -NoProfile -Command "New-Item -ItemType Directory -Force -Path '$(RUN_DIR)' | Out-Null" 2>/dev/null || mkdir -p $(RUN_DIR)
 
-# Internal: stop by pid file, then free port if still busy (Windows-friendly).
-.PHONY: _stop-pid
-_stop-pid:
-	@if [ -n "$(NAME)" ] && [ -f $(RUN_DIR)/$(NAME).pid ]; then \
-		pid=$$(cat $(RUN_DIR)/$(NAME).pid); \
+# Stop background service by pid file + free TCP port (Windows-friendly).
+ifeq ($(OS),Windows_NT)
+define STOP_SERVICE
+	@powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/stop_service.ps1 \
+		-Name $(1) -Port $(2) -PidFile $(RUN_DIR)/$(1).pid
+endef
+else
+define STOP_SERVICE
+	@if [ -f $(RUN_DIR)/$(1).pid ]; then \
+		pid=$$(cat $(RUN_DIR)/$(1).pid); \
 		if kill -0 $$pid 2>/dev/null; then kill $$pid 2>/dev/null || true; fi; \
-		rm -f $(RUN_DIR)/$(NAME).pid; \
-		echo "Остановлен $(NAME) (pid $$pid)"; \
+		rm -f $(RUN_DIR)/$(1).pid; \
+		echo "Остановлен $(1) (pid $$pid)"; \
 	fi
-	@if [ -n "$(PORT)" ]; then \
-		powershell.exe -NoProfile -Command \
-			"$$p=(Get-NetTCPConnection -LocalPort $(PORT) -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique); if ($$p) { $$p | ForEach-Object { Stop-Process -Id $$_ -Force -ErrorAction SilentlyContinue } }" \
-			2>/dev/null || true; \
-	fi
+	@if command -v fuser >/dev/null 2>&1; then fuser -k $(2)/tcp 2>/dev/null || true; fi
+endef
+endif

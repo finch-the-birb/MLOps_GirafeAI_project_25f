@@ -42,8 +42,13 @@ make test-triton
 === "PowerShell"
 
 ```powershell
-Invoke-RestMethod -Uri "http://127.0.0.1:8000/v2/health/ready"
-Invoke-RestMethod -Uri "http://127.0.0.1:8000/v2/models/multimodal_model_early/ready"
+# health/ready — HTTP 200, тело пустое (это OK)
+(Invoke-WebRequest -Uri "http://127.0.0.1:8000/v2/health/ready" -UseBasicParsing).StatusCode
+
+# метаданные модели (JSON для скрина)
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/v2/models/multimodal_model_early" | ConvertTo-Json -Depth 5
+
+make test-triton
 ```
 
 === "Git Bash / Linux"
@@ -72,6 +77,9 @@ Historical predict (2023):
 Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8001/api/v1/predict" `
   -ContentType "application/json" `
   -Body '{"ticker":"AAPL","target_date":"2023-06-15"}'
+
+# curl: в PowerShell без --% JSON до curl.exe не доходит
+curl.exe --% -s -X POST http://127.0.0.1:8001/api/v1/predict -H "Content-Type: application/json" -d "{\"ticker\":\"AAPL\",\"target_date\":\"2023-06-15\"}"
 ```
 
 === "Git Bash / Linux"

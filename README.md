@@ -172,5 +172,3 @@ make stack-up          # http://127.0.0.1:8501
 ![Streamlit: прогноз vs факт](docs/assets/screenshots/09_streamlit_prediction.png)
 
 ![Streamlit: OHLCV chart](docs/assets/screenshots/10_streamlit_chart.png)
-
-![Dense eval](docs/assets/screenshots/11_dense_eval.png)
