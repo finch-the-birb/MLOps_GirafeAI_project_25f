@@ -1,0 +1,6 @@
+# DVC-tracked parameters for the data preparation stage (see dvc.yaml).
+# ML/training hyperparameters live in Hydra conf/, not here.
+prepare:
+  top_tickers: 80
+  label_threshold_pct: 0.3
+  processed_file: data/processed/fnspid_subset_thr03.parquet

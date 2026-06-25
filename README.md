@@ -128,14 +128,14 @@ Streamlit UI (src/ui/app.py) ──HTTP──► FastAPI (service/app.py)
 
 **MLOps-стек:**
 
-| Компонент     | Реализация                              |
-| ------------- | --------------------------------------- |
-| Зависимости   | `uv`, `pyproject.toml`, lock-файл       |
-| Качество кода | `pre-commit` + `ruff` + prettier        |
-| Данные        | DVC (`make dvc-pull` / `make dvc-push`) |
-| Конфигурация  | Hydra `conf/`                           |
-| Обучение      | PyTorch Lightning + MLflow              |
-| Inference     | ONNX → Triton + FastAPI + Streamlit     |
+| Компонент     | Реализация                                                        |
+| ------------- | ----------------------------------------------------------------- |
+| Зависимости   | `uv`, `pyproject.toml`, lock-файл                                 |
+| Качество кода | `pre-commit` + `ruff` + prettier                                  |
+| Данные        | DVC (`make dvc-pull` / `make dvc-push`), params `dvc/params.yaml` |
+| Конфигурация  | Hydra `conf/` (обучение, eval, inference)                         |
+| Обучение      | PyTorch Lightning + MLflow                                        |
+| Inference     | ONNX → Triton + FastAPI + Streamlit                               |
 
 **Быстрый старт** (`make help`):
 

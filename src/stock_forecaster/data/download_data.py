@@ -17,6 +17,8 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+DVC_PARAMS_FILE = Path("dvc/params.yaml")
+
 HF_REPO_ID = "Zihan1004/FNSPID"
 NEWS_FILENAME = "Stock_news/nasdaq_exteral_data.csv"
 PRICE_ZIP_FILENAME = "Stock_price/full_history.zip"
@@ -415,6 +417,24 @@ def download_fnspid_subset(
     return output_path
 
 
+def load_prepare_params(params_file: Path = DVC_PARAMS_FILE) -> dict:
+    """Load DVC prepare-stage defaults from dvc/params.yaml."""
+    if not params_file.is_file():
+        return {}
+    try:
+        from omegaconf import OmegaConf
+
+        cfg = OmegaConf.load(params_file)
+        section = cfg.get("prepare")
+        if section is None:
+            return {}
+        loaded = OmegaConf.to_container(section, resolve=True)
+        return loaded if isinstance(loaded, dict) else {}
+    except Exception as exc:
+        logger.warning("Could not load %s: %s", params_file, exc)
+        return {}
+
+
 def download_data(
     processed_file: Path,
     top_tickers: int = 80,
@@ -444,20 +464,27 @@ def main() -> None:
     import argparse
 
     logging.basicConfig(level=logging.INFO)
+    dvc_params = load_prepare_params()
+    default_output = Path(
+        dvc_params.get("processed_file", "data/processed/fnspid_subset_thr03.parquet")
+    )
+    default_top_tickers = int(dvc_params.get("top_tickers", 80))
+    default_label_threshold = float(dvc_params.get("label_threshold_pct", 0.3))
+
     parser = argparse.ArgumentParser(description="Build FNSPID subset parquet.")
     parser.add_argument(
         "--output",
         type=Path,
-        default=Path("data/processed/fnspid_subset_thr03.parquet"),
+        default=default_output,
     )
-    parser.add_argument("--top-tickers", type=int, default=80)
+    parser.add_argument("--top-tickers", type=int, default=default_top_tickers)
     parser.add_argument(
         "--max-rows-per-ticker",
         type=int,
         default=None,
         help="Cap news rows per ticker (default: no cap, full scan).",
     )
-    parser.add_argument("--label-threshold-pct", type=float, default=0.3)
+    parser.add_argument("--label-threshold-pct", type=float, default=default_label_threshold)
     parser.add_argument(
         "--no-full-news-scan",
         action="store_true",

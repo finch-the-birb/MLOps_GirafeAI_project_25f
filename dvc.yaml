@@ -1,7 +1,13 @@
 stages:
   prepare:
     cmd: python -m stock_forecaster.data.download_data
+    params:
+      - dvc/params.yaml:
+          - prepare.top_tickers
+          - prepare.label_threshold_pct
+          - prepare.processed_file
     deps:
+      - dvc/params.yaml
       - src/stock_forecaster/data/download_data.py
     outs:
       - data/processed/fnspid_subset_thr03.parquet:
