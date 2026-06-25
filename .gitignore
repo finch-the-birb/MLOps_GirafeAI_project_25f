@@ -53,7 +53,7 @@ dvc-storage/
 
 # Local run outputs
 .run/
-models/
+/models/
 artifacts/
 site/
 project_notes/
