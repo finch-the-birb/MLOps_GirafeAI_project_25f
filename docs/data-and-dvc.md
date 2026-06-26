@@ -5,7 +5,7 @@
 [FNSPID](https://huggingface.co/datasets/Zihan1004/FNSPID) — Financial News and Stock Price Integration Dataset.
 
 - Полный корпус ~30 ГБ.
-- В проекте: топ-80 тикеров → `data/processed/fnspid_subset_thr03.parquet`.
+- В проекте: топ-80 тикеров → `data/processed/fnspid_subset_thr03.parquet` (~32 МБ).
 - Порог метки: **0.3%** (`label_threshold_pct`).
 
 ## Point-in-time
@@ -22,42 +22,84 @@
 
 Без случайного перемешивания (time series split).
 
-## DVC
+## Как получить данные после `git clone`
+
+Parquet **не в Git** (см. `.gitignore`). Публичного DVC-remote в репозитории нет — основной путь для проверяющего:
+
+```bash
+make install
+make data
+```
+
+`make data` вызывает `python -m stock_forecaster.data.download_data`, читает параметры из `dvc/params.yaml` (80 тикеров, порог 0.3%) и собирает parquet из HuggingFace.
+
+!!! warning "Время и объём"
+    Первый запуск скачивает с HuggingFace ~23 ГБ news CSV и ~560 МБ zip с котировками.
+    Повторный запуск использует кэш в `data/processed/raw/hf/`.
+    Ориентир: **15–40 минут** в зависимости от сети.
+
+Проверка:
+
+```bash
+# Windows PowerShell
+(Get-Item data/processed/fnspid_subset_thr03.parquet).Length / 1MB
+# ожидается ~31–33 МБ
+```
+
+Пересборка с нуля:
+
+```bash
+uv run python -m stock_forecaster.data.download_data --force
+```
+
+## DVC (опционально, для владельца репозитория)
 
 ```yaml
-# dvc.yaml
+# dvc.yaml — стадия prepare, параметры в dvc/params.yaml
 stages:
   prepare:
     cmd: python -m stock_forecaster.data.download_data
+    params:
+      - dvc/params.yaml:
+          - prepare.top_tickers
+          - prepare.label_threshold_pct
+          - prepare.processed_file
     outs:
       - data/processed/fnspid_subset_thr03.parquet
 ```
 
-- Lock-файл: `dvc.lock` (в Git).
-- Remote по умолчанию: `localstorage` → `dvc-storage/` (в `.gitignore`).
-- Конфиг: `.dvc/config`.
+| Файл | Назначение |
+| ---- | ---------- |
+| `dvc/params.yaml` | Параметры стадии `prepare` (тикеры, порог, путь) |
+| `dvc.lock` | Хеши артефактов (в Git) |
+| `.dvc/config` | Remote: `localstorage` → `../dvc-storage` (локально, не в Git) |
 
 ### Makefile
 
-| Команда           | Когда                                                 |
-| ----------------- | ----------------------------------------------------- |
-| `make dvc-pull`   | После `git clone` — подтянуть parquet из remote       |
-| `make dvc-push`   | После `make data` или `dvc repro` — выложить в remote |
-| `make dvc-status` | Проверить, что cache и remote синхронизированы        |
-| `make data`       | Собрать parquet из HuggingFace (если файла ещё нет)   |
+| Команда           | Когда |
+| ----------------- | ----- |
+| `make data`       | **После clone** — собрать parquet из HuggingFace |
+| `make dvc-pull`   | Если настроен свой remote с уже выложенным parquet |
+| `make dvc-push`   | После `make data` — выложить parquet в свой remote |
+| `make dvc-status` | Проверить cache ↔ remote |
 
 ```bash
-# типичный сценарий для проверяющего
+# сценарий для проверяющего (без своего DVC remote)
 make install
-make dvc-pull
-
-# после локальной пересборки датасета
 make data
+make train
+
+# сценарий владельца с настроенным remote (например S3 в .dvc/config.local)
+make data
+dvc repro          # обновить dvc.lock при изменении dvc/params.yaml
 make dvc-push
-make dvc-status
 ```
 
-Pull также доступен из Python: `pull_with_dvc()` в `download_data.py`.
+Чтобы раздавать данные через DVC, настройте remote в `.dvc/config.local` (пример S3 закомментирован в `.dvc/config`) и выполните `make dvc-push` после сборки.
+
+Pull также вызывается из Python при обучении: `pull_with_dvc()` в `download_data.py` (если remote доступен).
+
+Гиперпараметры обучения — в Hydra `conf/` (см. [Конфигурация](configuration.md)).
 
 ## Что не коммитить
 

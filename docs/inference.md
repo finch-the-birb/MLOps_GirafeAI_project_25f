@@ -64,6 +64,10 @@ curl -s http://127.0.0.1:8000/v2/models/multimodal_model_early/ready
 
 ## FastAPI
 
+Единственный predict-endpoint: **`POST /api/v1/predict`** (historical, 2023).
+
+Legacy `POST /predict` (live yfinance) удалён.
+
 ```bash
 make api
 # Swagger: http://127.0.0.1:8001/docs
@@ -99,10 +103,14 @@ make stack-up    # Triton + API + UI
 
 ## CLI
 
+Historical predict (2023, из parquet + Triton):
+
 ```bash
-make infer TICKER=AAPL
-# или: uv run python infer.py ticker=AAPL
+make infer TICKER=AAPL TARGET_DATE=2023-06-15
+# или: uv run python infer.py inference.ticker=AAPL inference.target_date=2023-06-15
 ```
+
+Требуется локальный parquet (`make data`) и запущенный Triton (`make triton-up`).
 
 ## TensorRT (опционально)
 

@@ -10,13 +10,11 @@ make install-ui       # Streamlit (опционально)
 ## Данные
 
 ```bash
-make dvc-pull         # после git clone — из DVC remote
-# или make data       # первая сборка из HuggingFace (долго)
-make dvc-push         # после make data — выложить в remote
-make dvc-status       # cache ↔ remote синхронизированы?
+make data             # после git clone — собрать parquet из HuggingFace (~15–40 мин)
+# make dvc-pull       # альтернатива, если у вас настроен DVC remote с parquet
 ```
 
-Parquet: `data/processed/fnspid_subset_thr03.parquet` (не в Git, DVC). Подробнее: [Данные и DVC](data-and-dvc.md).
+Parquet: `data/processed/fnspid_subset_thr03.parquet` (не в Git). Подробнее: [Данные и DVC](data-and-dvc.md).
 
 ## Обучение и эксперименты
 

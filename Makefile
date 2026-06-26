@@ -13,6 +13,7 @@ API_PORT := 8001
 UI_PORT  := 8501
 DOCS_PORT := 8002
 TICKER   ?= AAPL
+TARGET_DATE ?= 2023-06-15
 HYBRID_DENSE_CKPT ?= $(shell ls -t checkpoints/hybrid_dense/*.ckpt 2>/dev/null | head -1)
 
 .PHONY: help install install-ui install-docs data dvc-pull dvc-push dvc-status lint test verify \
@@ -151,8 +152,8 @@ ui: install-ui $(RUN_DIR) ## Запустить Streamlit UI (фон, :8501)
 ui-stop: ## Остановить Streamlit
 	$(call STOP_SERVICE,ui,$(UI_PORT))
 
-infer: triton-up ## CLI-инференс (TICKER=AAPL)
-	$(PY) infer.py ticker=$(TICKER)
+infer: triton-up ## CLI-инференс (TICKER=AAPL, TARGET_DATE=2023-06-15)
+	$(PY) infer.py inference.ticker=$(TICKER) inference.target_date=$(TARGET_DATE)
 
 stack-up: triton-up api ui ## Поднять стек инференса (Triton + FastAPI + Streamlit)
 	@echo "Стек готов: Triton :8000, API :$(API_PORT), UI :$(UI_PORT)"

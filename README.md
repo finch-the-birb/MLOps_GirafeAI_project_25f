@@ -132,7 +132,7 @@ Streamlit UI (src/ui/app.py) ──HTTP──► FastAPI (service/app.py)
 | ------------- | ----------------------------------------------------------------- |
 | Зависимости   | `uv`, `pyproject.toml`, lock-файл                                 |
 | Качество кода | `pre-commit` + `ruff` + prettier                                  |
-| Данные        | DVC (`make dvc-pull` / `make dvc-push`), params `dvc/params.yaml` |
+| Данные        | HuggingFace FNSPID (`make data`), опционально DVC (`dvc/params.yaml`) |
 | Конфигурация  | Hydra `conf/` (обучение, eval, inference)                         |
 | Обучение      | PyTorch Lightning + MLflow                                        |
 | Inference     | ONNX → Triton + FastAPI + Streamlit                               |
@@ -141,7 +141,7 @@ Streamlit UI (src/ui/app.py) ──HTTP──► FastAPI (service/app.py)
 
 ```bash
 make install
-make dvc-pull          # после git clone
+make data              # parquet из HuggingFace (после clone)
 make train             # hybrid + MLflow
 make baseline
 make eval

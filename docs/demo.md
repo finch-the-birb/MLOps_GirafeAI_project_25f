@@ -6,7 +6,8 @@
 
 ```bash
 make install
-make dvc-pull         # или make data + make dvc-push при первой сборке
+make data             # после clone — parquet из HuggingFace
+# make dvc-pull       # если настроен свой DVC remote
 make export
 ```
 

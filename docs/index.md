@@ -26,7 +26,7 @@
 
 ```bash
 make install
-make dvc-pull
+make data
 make train
 make export
 make stack-up
